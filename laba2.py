@@ -1,3 +1,4 @@
+import base64
 #создадим словарь, где ключ - название остановки, значение - список с координатами и временем до следующей остановки 
 # stopover_dict = {"Остановка 1": ["Адрес 1",15],
 #                  "Остановка 2": ["Адрес 2",13],
@@ -75,28 +76,62 @@ class ReturnRoute():
         return f'Обратный маршрут выглядит так:\n{self.novai_name_stopover}'
 
 #Класс для вывода маршрута в формате таблицы
-class Spreadsheet:
-    def __init__(self,massiv):
-        self.name_massiv = [massiv[i][0] for i in range(len(massiv))]
-        self.headers = ["№", "Остановка"]
-    def FormatTabl(self):
-        col_widths = [
-        max(len(str(len(self.name_massiv))), len(self.name_massiv[0])),  # ширина для номера
-        max(max(len(stop) for stop in self.name_massiv), len(self.name_massiv[1]))]  # ширина для названия
-        separator = "+" + "+".join("-" * (width + 2) for width in col_widths) + "+"
-        #ДОДУМАТЬ ИДЕЮ С ВЫВОДОМ ТАБЛИЦЫ
-        print(separator)
-        header_row = f"| {headers[0]:^{col_widths[0]}} | {headers[1]:^{col_widths[1]}} |"
-        print(header_row)
-        print(separator)
+# class Spreadsheet:
+#     def __init__(self,massiv):
+#         self.name_massiv = [massiv[i][0] for i in range(len(massiv))]
+#         self.headers = ["№", "Остановка"]
+#     def FormatTabl(self):
+#         col_widths = [
+#         max(len(str(len(self.name_massiv))), len(self.name_massiv[0])),  # ширина для номера
+#         max(max(len(stop) for stop in self.name_massiv), len(self.name_massiv[1]))]  # ширина для названия
+#         separator = "+" + "+".join("-" * (width + 2) for width in col_widths) + "+"
+#         #ДОДУМАТЬ ИДЕЮ С ВЫВОДОМ ТАБЛИЦЫ
+#         print(separator)
+#         header_row = f"| {headers[0]:^{col_widths[0]}} | {headers[1]:^{col_widths[1]}} |"
+#         print(header_row)
+#         print(separator)
         
-        # Выводим остановки
-        for i, stop in enumerate(stops, 1):
-            row = f"| {i:^{col_widths[0]}} | {stop:<{col_widths[1]}} |"
-            print(row)
+#         # Выводим остановки
+#         for i, stop in enumerate(stops, 1):
+#             row = f"| {i:^{col_widths[0]}} | {stop:<{col_widths[1]}} |"
+#             print(row)
         
-        print(separator)
+#         print(separator)
 
+#Класс для создания текстового файла 
+class TextFile():
+    def __init__(self,stopover_list):
+        self.stopover_list = stopover_list
+        self.content = ''
+        self.content_1 = ''
+    def ConvertingFile(self):
+        for route in self.stopover_list:
+
+            encoded_name = base64.b64encode(str(route[0]).encode())
+            encoded_address = base64.b64encode(str(route[1]).encode())
+            encoded_time = base64.b64encode(str(route[2]).encode())
+            with open('data.txt', 'w',encoding='utf-8') as file:
+                file.write(f"{encoded_name}, {encoded_address}, {encoded_time}\n")
+
+            
+            encoded_name_bytes = base64.b64decode(encoded_name)
+            decoded_name_text = encoded_name_bytes.decode('utf-8')
+            encoded_address_bytes = base64.b64decode(encoded_address)
+            decoded_address_text = encoded_address_bytes.decode('utf-8')
+            encoded_time_bytes = base64.b64decode(encoded_time)
+            decoded_time_text = encoded_time_bytes.decode('utf-8')
+            with open('proverka.txt','w',encoding='utf-8') as file_pr:
+                file_pr.write(f"{decoded_name_text}, {decoded_address_text}, {decoded_time_text}\n")
+
+        with open('data.txt', 'r', encoding='utf-8') as file_route:
+            self.content = file_route.read()
+
+        with open('proverka.txt', 'r', encoding='utf-8') as file_route_1:
+            self.content_1 = file_route_1.read()
+    def __str__(self):
+        return f'Текстовый файл маршрута (Base64): {self.content}\n Восстановленный текстовый файл маршрута: {self.content_1}'
+    
+            
 
 
 class Main():
@@ -136,5 +171,11 @@ class Main():
     print(d)
     print('\n'+"=" * 80)
 
-if __name__ == "__main__":
-    Main()
+    print('\n'+"=" * 80)
+    print('***КОНВЕРТАЦИЯ МАРШРУТА В ТЕКСТОВЫЙ ФАЙЛ (BASE64)***\n')
+    e = TextFile(stopover_list) 
+    e.ConvertingFile()
+    print(e)
+    print('\n'+"=" * 80)
+
+
