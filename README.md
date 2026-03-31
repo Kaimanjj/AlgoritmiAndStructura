@@ -1,12 +1,12 @@
 # Лабораторная работа №2
 ## Подготовила Пивоварчук Дарья ИДБ-25-07
 1. Подключенные библиотеки
-```
+```python
   import base64 #для конвертации данных
   from tabulate import tabulate #для форматирования списка в таблицу
 ```
 3. Класс для нахождения индекса выбранной остановки в списке
-```
+```python
 class IndexOstanovki:
     @staticmethod
     def OpredOstanovki(stopover_list,current_stopover):
@@ -18,7 +18,7 @@ class IndexOstanovki:
         return k
 ```
 4. Добавление остановки 
-```
+```python
 class Add_Stopover:
     def __init__(self,stopover_list,name_stopover , address_stopover , time_stopover):
         self.stopover_list = stopover_list
@@ -32,7 +32,7 @@ class Add_Stopover:
         return f'Конечный список маршрута автобуса:{self.stopover_list}'
 ```
 5. Расчет общего времени маршрута
-```
+```python
 class AllTime:
     def __init__(self,stopover_list,dop_class_index,begining,end):
         self.stopover_list = stopover_list
@@ -49,7 +49,7 @@ class AllTime:
         return f'Общее время маршрута:{self.time_way}'
 ```
 6. Определение, где будет автобус через N остановок
-```
+```python
 class DeltaStopover:
     def __init__(self,stopover_list, dop_class_index):
         self.stopover_list = stopover_list
@@ -64,7 +64,7 @@ class DeltaStopover:
         return f'Через {self.count_stopover} остановок автобус будет на остновке под названием:{self.stopover_list[self.count_stopover+self.kolichestvo][0]}'
 ```
 7. Построение обратного маршрута 
-```
+```python
 class ReturnRoute:
     def __init__(self, stopover_list, dop_class_index):
         self.stopover_list = stopover_list
@@ -81,7 +81,7 @@ class ReturnRoute:
         return f'Обратный маршрут выглядит так:\n{self.novai_name_stopover}'
 ```
 8. Класс для вывода маршрута в формате таблицы
-```
+```python
 class Spreadsheet:
     def __init__(self, stopover_list):
         self.stopover_list = stopover_list
@@ -90,7 +90,7 @@ class Spreadsheet:
         return f'Табличное представление информации\n{tabulate(self.stopover_list, headers=self.headers, tablefmt="pretty")}'
 ```
 9. Класс для создания текстового файла 
-```
+```python
 class TextFile:
     def __init__(self,stopover_list):
         self.stopover_list = stopover_list
@@ -119,7 +119,7 @@ class TextFile:
         return f'Текстовый файл маршрута (Base64):\n {self.content}\n Восстановленный текстовый файл маршрута:\n {self.content_1}'
 ```
 10. Главная функция, которая вызывает остальные
-```
+```python
 class Main:
     with open('data.txt', 'w', encoding='utf-8'):
         pass  # файл очищен
@@ -180,7 +180,7 @@ class Main:
     print('\n'+"=" * 80)
 ```
 12. Вызов главной функции
-```
+```python
 if __name__ == '__main__':
         Main()
 ```
