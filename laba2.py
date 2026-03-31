@@ -173,7 +173,6 @@ class Main:
     print('\n'+"=" * 80)
     print('***ПРЕДСТАВЛЕНИЕ МАРШРУТА В ФОРМАТЕ ТАБЛИЦЫ***\n')
     f = Spreadsheet(stopover_list) 
-    #f.ConvertingFile()
     print(f)
     print('\n'+"=" * 80)
 
