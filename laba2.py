@@ -1,4 +1,5 @@
 import base64
+from tabulate import tabulate
 #создадим словарь, где ключ - название остановки, значение - список с координатами и временем до следующей остановки 
 # stopover_dict = {"Остановка 1": ["Адрес 1",15],
 #                  "Остановка 2": ["Адрес 2",13],
@@ -35,12 +36,17 @@ class Add_Stopover:
 
 #расчет общего времени маршрута
 class AllTime:
-    def __init__(self,stopover_list):
+    def __init__(self,stopover_list,dop_class_index,begining,end):
         self.stopover_list = stopover_list
+        self.dop_class_index = dop_class_index
+        self.begining = begining
+        self.end = end
         self.time_way = 0
     def RaschetTime(self):
-        for i in self.stopover_list:
-            self.time_way += i[2]
+        index_begining = self.dop_class_index.OpredOstanovki(self.stopover_list, self.begining)
+        index_end  = self.dop_class_index.OpredOstanovki(self.stopover_list, self.end)
+        for i in range(index_begining, index_end):
+            self.time_way += self.stopover_list[i][2]
     def __str__(self):
         return f'Общее время маршрута:{self.time_way}'
 
@@ -60,7 +66,7 @@ class DeltaStopover:
         return f'Через {self.count_stopover} остановок автобус будет на остновке под названием:{self.stopover_list[self.count_stopover+self.kolichestvo][0]}'
 
 #построение обратного маршрута 
-class ReturnRoute():
+class ReturnRoute:
     def __init__(self, stopover_list, dop_class_index):
         self.stopover_list = stopover_list
         self.dop_class_index = dop_class_index #полезная штука вызова метода из одного класса в другой, запомнить и не забыть вновь
@@ -76,30 +82,22 @@ class ReturnRoute():
         return f'Обратный маршрут выглядит так:\n{self.novai_name_stopover}'
 
 #Класс для вывода маршрута в формате таблицы
-# class Spreadsheet:
-#     def __init__(self,massiv):
-#         self.name_massiv = [massiv[i][0] for i in range(len(massiv))]
-#         self.headers = ["№", "Остановка"]
-#     def FormatTabl(self):
-#         col_widths = [
-#         max(len(str(len(self.name_massiv))), len(self.name_massiv[0])),  # ширина для номера
-#         max(max(len(stop) for stop in self.name_massiv), len(self.name_massiv[1]))]  # ширина для названия
-#         separator = "+" + "+".join("-" * (width + 2) for width in col_widths) + "+"
-#         #ДОДУМАТЬ ИДЕЮ С ВЫВОДОМ ТАБЛИЦЫ
-#         print(separator)
-#         header_row = f"| {headers[0]:^{col_widths[0]}} | {headers[1]:^{col_widths[1]}} |"
-#         print(header_row)
-#         print(separator)
+class Spreadsheet:
+    def __init__(self, stopover_list):
+        self.stopover_list = stopover_list
+        self.headers = ["Название", "Адрес", "Время до следующей остановки"]
+    def __str__(self):
+        return f'Табличное представление информации\n{tabulate(self.stopover_list, headers=self.headers, tablefmt="pretty")}'
+#     print(tabulate(data, headers=headers, tablefmt="grid"))
+# print("\n")
+# print(tabulate(data, headers=headers, tablefmt="pipe"))
+# print("\n")
+# print(tabulate(data, headers=headers, tablefmt="pretty"))
+
         
-#         # Выводим остановки
-#         for i, stop in enumerate(stops, 1):
-#             row = f"| {i:^{col_widths[0]}} | {stop:<{col_widths[1]}} |"
-#             print(row)
-        
-#         print(separator)
 
 #Класс для создания текстового файла 
-class TextFile():
+class TextFile:
     def __init__(self,stopover_list):
         self.stopover_list = stopover_list
         self.content = ''
@@ -110,7 +108,7 @@ class TextFile():
             encoded_name = base64.b64encode(str(route[0]).encode())
             encoded_address = base64.b64encode(str(route[1]).encode())
             encoded_time = base64.b64encode(str(route[2]).encode())
-            with open('data.txt', 'w',encoding='utf-8') as file:
+            with open('data.txt', 'a',encoding='utf-8') as file:
                 file.write(f"{encoded_name}, {encoded_address}, {encoded_time}\n")
 
             
@@ -120,7 +118,7 @@ class TextFile():
             decoded_address_text = encoded_address_bytes.decode('utf-8')
             encoded_time_bytes = base64.b64decode(encoded_time)
             decoded_time_text = encoded_time_bytes.decode('utf-8')
-            with open('proverka.txt','w',encoding='utf-8') as file_pr:
+            with open('proverka.txt','a',encoding='utf-8') as file_pr:
                 file_pr.write(f"{decoded_name_text}, {decoded_address_text}, {decoded_time_text}\n")
 
         with open('data.txt', 'r', encoding='utf-8') as file_route:
@@ -129,12 +127,16 @@ class TextFile():
         with open('proverka.txt', 'r', encoding='utf-8') as file_route_1:
             self.content_1 = file_route_1.read()
     def __str__(self):
-        return f'Текстовый файл маршрута (Base64): {self.content}\n Восстановленный текстовый файл маршрута: {self.content_1}'
+        return f'Текстовый файл маршрута (Base64):\n {self.content}\n Восстановленный текстовый файл маршрута:\n {self.content_1}'
     
             
 
 
-class Main():
+class Main:
+    with open('data.txt', 'w', encoding='utf-8'):
+        pass  # файл очищен
+    with open('proverka.txt', 'w', encoding='utf-8'):
+        pass  # файл очищен
     #так как надо работать со списками, создадим список со списками с аналогичными значениями
     stopover_list = [["Остановка 1","Адрес 1",15],["Остановка 2","Адрес 2",13],["Остановка 3","Адрес 3",9],["Остановка 4","Адрес 4",23],["Остановка 5","Адрес 5",5],["Остановка 6","Адрес 6",8]]
     print("=" * 80)
@@ -144,7 +146,9 @@ class Main():
 
     print('\n'+"=" * 80)
     print('***ДОБАВЛЕНИЕ ОСТАНОВКИ***\n')
-    name_stopover , address_stopover , time_stopover = input("Введите название новой остановки, её адрес и время до следующей остановки\n").split()
+    name_stopover = str(input("Введите название новой остановки:\n"))
+    address_stopover = str(input("Её адрес:\n"))
+    time_stopover = input("И время до следующей остановки:\n")
     a = Add_Stopover(stopover_list,name_stopover,address_stopover,time_stopover)
     a.AppendInList()
     print(a)
@@ -152,7 +156,9 @@ class Main():
 
     print('\n'+"=" * 80)
     print('***РАСЧЕТ ОБЩЕГО ВРЕМЕНИ МАРШРУТА***\n')
-    b = AllTime(stopover_list)
+    beginning = input('С какой остановки начать путь:')
+    end = input('До какой остановки:')
+    b = AllTime(stopover_list,IndexOstanovki,beginning,end)
     b.RaschetTime()
     print(b)
     print('\n'+"=" * 80)
@@ -172,10 +178,18 @@ class Main():
     print('\n'+"=" * 80)
 
     print('\n'+"=" * 80)
+    print('***ПРЕДСТАВЛЕНИЕ МАРШРУТА В ФОРМАТЕ ТАБЛИЦЫ***\n')
+    f = Spreadsheet(stopover_list) 
+    #f.ConvertingFile()
+    print(f)
+    print('\n'+"=" * 80)
+
+    print('\n'+"=" * 80)
     print('***КОНВЕРТАЦИЯ МАРШРУТА В ТЕКСТОВЫЙ ФАЙЛ (BASE64)***\n')
     e = TextFile(stopover_list) 
     e.ConvertingFile()
     print(e)
     print('\n'+"=" * 80)
 
-
+if __name__ == '__main__':
+    Main()
