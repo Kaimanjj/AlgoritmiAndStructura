@@ -88,14 +88,7 @@ class Spreadsheet:
         self.headers = ["Название", "Адрес", "Время до следующей остановки"]
     def __str__(self):
         return f'Табличное представление информации\n{tabulate(self.stopover_list, headers=self.headers, tablefmt="pretty")}'
-#     print(tabulate(data, headers=headers, tablefmt="grid"))
-# print("\n")
-# print(tabulate(data, headers=headers, tablefmt="pipe"))
-# print("\n")
-# print(tabulate(data, headers=headers, tablefmt="pretty"))
-
         
-
 #Класс для создания текстового файла 
 class TextFile:
     def __init__(self,stopover_list):
