@@ -1,9 +1,11 @@
 # Лабораторная работа №2
 ## Подготовила Пивоварчук Дарья ИДБ-25-07
 1. Подключенные библиотеки
+```
   import base64 #для конвертации данных
   from tabulate import tabulate #для форматирования списка в таблицу
-2. Класс для нахождения индекса выбранной остановки в списке
+```
+3. Класс для нахождения индекса выбранной остановки в списке
 class IndexOstanovki:
     @staticmethod
     def OpredOstanovki(stopover_list,current_stopover):
@@ -13,7 +15,7 @@ class IndexOstanovki:
                 return k
             k+=1
         return k
-3. Добавление остановки 
+4. Добавление остановки 
 class Add_Stopover:
     def __init__(self,stopover_list,name_stopover , address_stopover , time_stopover):
         self.stopover_list = stopover_list
@@ -25,7 +27,7 @@ class Add_Stopover:
         self.stopover_list.append([self.name_stopover,self.address_stopover,time_stopover_int])
     def __str__(self):
         return f'Конечный список маршрута автобуса:{self.stopover_list}'
-4. Расчет общего времени маршрута
+5. Расчет общего времени маршрута
 class AllTime:
     def __init__(self,stopover_list,dop_class_index,begining,end):
         self.stopover_list = stopover_list
@@ -40,7 +42,7 @@ class AllTime:
             self.time_way += self.stopover_list[i][2]
     def __str__(self):
         return f'Общее время маршрута:{self.time_way}'
-5. Определение, где будет автобус через N остановок
+6. Определение, где будет автобус через N остановок
 class DeltaStopover:
     def __init__(self,stopover_list, dop_class_index):
         self.stopover_list = stopover_list
@@ -53,7 +55,7 @@ class DeltaStopover:
         self.kolichestvo = self.dop_class_index.OpredOstanovki(self.stopover_list,current_stopover_1)
     def __str__(self):
         return f'Через {self.count_stopover} остановок автобус будет на остновке под названием:{self.stopover_list[self.count_stopover+self.kolichestvo][0]}'
-6. Построение обратного маршрута 
+7. Построение обратного маршрута 
 class ReturnRoute:
     def __init__(self, stopover_list, dop_class_index):
         self.stopover_list = stopover_list
@@ -68,14 +70,14 @@ class ReturnRoute:
         self.novai_name_stopover = [self.novai_stopover_list[i][0] for i in range (tekush_ost)]
     def __str__(self):
         return f'Обратный маршрут выглядит так:\n{self.novai_name_stopover}'
-7. Класс для вывода маршрута в формате таблицы
+8. Класс для вывода маршрута в формате таблицы
 class Spreadsheet:
     def __init__(self, stopover_list):
         self.stopover_list = stopover_list
         self.headers = ["Название", "Адрес", "Время до следующей остановки"]
     def __str__(self):
         return f'Табличное представление информации\n{tabulate(self.stopover_list, headers=self.headers, tablefmt="pretty")}'
-8. Класс для создания текстового файла 
+9. Класс для создания текстового файла 
 class TextFile:
     def __init__(self,stopover_list):
         self.stopover_list = stopover_list
@@ -102,7 +104,7 @@ class TextFile:
             self.content_1 = file_route_1.read()
     def __str__(self):
         return f'Текстовый файл маршрута (Base64):\n {self.content}\n Восстановленный текстовый файл маршрута:\n {self.content_1}'
-9. Главная функция, которая вызывает остальные
+10. Главная функция, которая вызывает остальные
     class Main:
     with open('data.txt', 'w', encoding='utf-8'):
         pass  # файл очищен
@@ -161,7 +163,7 @@ class TextFile:
     e.ConvertingFile()
     print(e)
     print('\n'+"=" * 80)
-10. Вызов главной функции
+11. Вызов главной функции
     if __name__ == '__main__':
         Main()
     
